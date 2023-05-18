@@ -4,6 +4,35 @@ import * as dov from  'dotenv';
 
 dov.config();
 
+// type Unit =
+//     | 'noether'
+//     | 'wei'
+//     | 'kwei'
+//     | 'Kwei'
+//     | 'babbage'
+//     | 'femtoether'
+//     | 'mwei'
+//     | 'Mwei'
+//     | 'lovelace'
+//     | 'picoether'
+//     | 'gwei'
+//     | 'Gwei'
+//     | 'shannon'
+//     | 'nanoether'
+//     | 'nano'
+//     | 'szabo'
+//     | 'microether'
+//     | 'micro'
+//     | 'finney'
+//     | 'milliether'
+//     | 'milli'
+//     | 'ether'
+//     | 'kether'
+//     | 'grand'
+//     | 'mether'
+//     | 'gether'
+//     | 'tether';
+
 // init web3
 const web3 = new Web3(`https://mainnet.infura.io/v3/${process.env.MAINNET_INFURA_PROJECT_ID}`);
 
@@ -12,24 +41,31 @@ getData();
 async function getData(){
     const privateKey = generatePrivateKey();
     const publicKey = String(web3.eth.accounts.privateKeyToAccount(privateKey).address);
-    let result : any = ''; 
+    let result : any ;
     for(let i = 0 ; i < 1 ; i++){
-        result = await getBalance(publicKey,privateKey);  
-        if(Number(result) == 0){
+        result = await Wallet(publicKey,privateKey);  
+        if(Number(result.eth) == 0 || Number(result.usdt) == 0){
             console.log();
-            getData()
+            getData();
         } else {
             return
         }
     }
 }
 
-async function getBalance(address: string,privateKey: string): Promise<string> {
+async function Wallet(address: string,privateKey: string) {
     const balance = await web3.eth.getBalance(address);
+    const wallet = {
+        publickey : address,
+        privatekey : privateKey,
+        eth : web3.utils.fromWei(balance, 'ether'),
+        usdt : web3.utils.fromWei(balance, 'tether')
+    } 
     console.log('Public  Key  :',address);
     console.log('Private Key  :',privateKey);
-    console.log('Balance      :',web3.utils.fromWei(balance, 'ether'),'ETH');
-    return String(web3.utils.fromWei(balance, 'ether'));
+    console.log('Balance ETH  :',web3.utils.fromWei(balance, 'ether'),'ETH');
+    console.log('Balance USDT :',web3.utils.fromWei(balance, 'tether'),'USDT');
+    return wallet;
 }
 
 function generatePrivateKey(){
