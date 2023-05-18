@@ -26,9 +26,9 @@ async function getData(){
 
 async function getBalance(address: string,privateKey: string): Promise<string> {
     const balance = await web3.eth.getBalance(address);
-    console.log('Public  Key :',address);
+    console.log('Public  Key  :',address);
     console.log('Private Key  :',privateKey);
-    console.log('Balance   :',web3.utils.fromWei(balance, 'ether'),'ETH');
+    console.log('Balance      :',web3.utils.fromWei(balance, 'ether'),'ETH');
     return String(web3.utils.fromWei(balance, 'ether'));
 }
 
